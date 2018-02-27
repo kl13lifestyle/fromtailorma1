@@ -66,9 +66,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (location != null) {
                             Log.v("Test Log", "location is not null");
                             // Add a marker in Sydney and move the camera
-                            LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-                            mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            float zoomLevel = (float) 16.0; //This goes up to 21
+                            mMap.addMarker(new MarkerOptions().position(currentLocation).title("My Location"));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,zoomLevel));
                         } else {
                             Log.v("Test Log", "location is null");
                             String msg = "Location unknown";
