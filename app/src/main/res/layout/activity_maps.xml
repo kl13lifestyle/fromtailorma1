@@ -12,7 +12,36 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginEnd="50dp"
+        android:background="#80000000">
+    <fragment
+        android:id="@+id/place_autocomplete"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        /></LinearLayout>
+    <ImageButton android:id="@+id/mylocation"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/mylocationblk"
+        android:onClick="backToHome"
+        android:background="@null"/>
 
+    <ImageButton android:id="@+id/mapback"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/closeicon"
+        android:onClick="backToHome"
+        android:background="@null"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="50dp"
