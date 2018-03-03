@@ -51,9 +51,19 @@
         android:id="@+id/alertButton"
         android:layout_alignBottom="@id/map"
         android:text="ALERT ME"/>
+    <SeekBar
+        android:id="@+id/seekBarRadius"
+        android:max="5000"
+        android:progress="100"
+        android:background="#80000000"
+        android:layout_above="@id/favbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <LinearLayout
+        android:id="@+id/favbar"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:background="#80000000"
         android:baselineAligned="false"
         android:layout_above="@id/alertButton"
         android:orientation="horizontal">

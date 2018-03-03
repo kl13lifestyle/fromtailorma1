@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -38,17 +39,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
     PlaceAutocompleteFragment placeAutoComplete;
+    private double radius;
+    private Circle circle;
     //geofence
     //private GeofencingClient mGeofencingClient;
     //mGeofencingClient = LocationServices.getGeofencingClient(this);
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         setContentView(R.layout.activity_maps);
+
+        SeekBar seekBar = findViewById(R.id.seekBarRadius);
+        seekBar.setOnSeekBarChangeListener(seekBarChangeListener);
+        radius = seekBar.getProgress();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -72,11 +78,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            // updated continuously as the user slides the thumb
+            circle.setRadius(progress);
+            //Toast.makeText(getApplicationContext(), radius, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            // called when the user first touches the SeekBar
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            // called after the user finishes moving the SeekBar
+        }
+    };
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    /**
+     * @return the radius
+     */
+    public double getRadius() {
+        return radius;
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
@@ -120,22 +153,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Toast.makeText(getApplicationContext(), "YOU CLICKED ON " + marker.getTitle(), Toast.LENGTH_LONG).show();
+
+
                 CircleOptions circleOptions = new CircleOptions()
-                        .center( new LatLng(marker.getPosition().latitude, marker.getPosition().longitude) )
-                        .radius(100)
+                        .center( new LatLng(marker.getPosition().latitude, marker.getPosition().longitude))
                         .fillColor(0x40ff0000)
+                        .radius(100)
                         .strokeColor(Color.TRANSPARENT)
                         .strokeWidth(2);
 
 // Get back the mutable Circle
-                Circle circle = mMap.addCircle(circleOptions);
+                circle = mMap.addCircle(circleOptions);
 // more operations on the circle...
                 return false;
             }
         });
-     }
-
-
+    }
 
     public void addMarker(Place p){
         MarkerOptions markerOptions = new MarkerOptions();
@@ -147,8 +180,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
     }
-
-
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
