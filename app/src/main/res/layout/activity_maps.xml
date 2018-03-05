@@ -50,6 +50,7 @@
         android:fadingEdge="vertical"
         android:id="@+id/alertButton"
         android:layout_alignBottom="@id/map"
+        android:onClick="startNavigation"
         android:text="ALERT ME"/>
     <SeekBar
         android:id="@+id/seekBarRadius"

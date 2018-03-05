@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -40,16 +41,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedLocationClient;
     PlaceAutocompleteFragment placeAutoComplete;
     private double radius;
-    private Circle circle;
-    //geofence
-    //private GeofencingClient mGeofencingClient;
-    //mGeofencingClient = LocationServices.getGeofencingClient(this);
+    public Circle circle;
+
+    private GeofencingClient mGeofencingClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         setContentView(R.layout.activity_maps);
+
+        mGeofencingClient = LocationServices.getGeofencingClient(this);
 
         SeekBar seekBar = findViewById(R.id.seekBarRadius);
         seekBar.setOnSeekBarChangeListener(seekBarChangeListener);
@@ -66,6 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
+                mMap.clear();
                 addMarker(place);
                 Log.d("Maps", "Place selected: " + place.getName());
             }
@@ -128,6 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                             float zoomLevel = (float) 16.0; //This goes up to 21
                             //addMarker(currentLocation);
+                            mMap.clear();
                             mMap.addMarker(new MarkerOptions().position(currentLocation).title("My Location"));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,zoomLevel));
                         } else {
@@ -148,6 +153,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         e.printStackTrace();
                     }
                 });
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+            @Override
+            public void onMapClick(LatLng point) {
+                MarkerOptions marker = new MarkerOptions().position(
+                        new LatLng(point.latitude, point.longitude));
+
+                mMap.clear();
+                mMap.addMarker(marker);
+            }
+        });
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -199,6 +216,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivity(new Intent(MapsActivity.this, MainActivity.class));
         // close maps activity
         finish();
+    }
+
+    public  void startNavigation(View view){
+        Intent intent = new Intent(MapsActivity.this, NavigationActivity.class);
+        intent.putExtra("latitude",circle.getCenter().latitude);
+        intent.putExtra("longitude",circle.getCenter().longitude);
+        intent.putExtra("radius",circle.getRadius());
+        Log.v("Final latitude",String.valueOf(circle.getCenter().latitude));
+        Log.v("Final longitude",String.valueOf(circle.getCenter().longitude));
+        Log.v("Final radius",String.valueOf(circle.getRadius()));
+        startActivity(intent);
     }
 
 }
